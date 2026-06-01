@@ -85,6 +85,13 @@
   --color-success-foreground: var(--success-foreground);
 }
 
+@keyframes gridBreathe {
+  0%, 100% { background-position: 0 0; }
+  25% { background-position: 1.5px 0; }
+  50% { background-position: 1.5px 1.5px; }
+  75% { background-position: 0 1.5px; }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
