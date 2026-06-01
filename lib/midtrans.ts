@@ -31,8 +31,10 @@ export async function createMidtransTransaction(params: {
 }) {
   const Midtrans = require("midtrans-client")
 
+  const isProduction = !process.env.MIDTRANS_SERVER_KEY?.startsWith("SB-")
+
   const snap = new Midtrans.Snap({
-    isProduction: false,
+    isProduction,
     serverKey: process.env.MIDTRANS_SERVER_KEY!,
     clientKey: process.env.MIDTRANS_CLIENT_KEY!,
   })

@@ -55,16 +55,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        await connectDB()
-        const existing = await User.findOne({ email: user.email })
-        if (!existing) {
-          await User.create({
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            emailVerified: new Date(),
-            subscription: { tier: "free", paymentVerified: false },
-          })
+        try {
+          await connectDB()
+          const existing = await User.findOne({ email: user.email })
+          if (!existing) {
+            await User.create({
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              emailVerified: new Date(),
+              subscription: { tier: "free", paymentVerified: false },
+            })
+          }
+        } catch (error) {
+          console.error("[AUTH_GOOGLE_SIGNIN]", error)
+          return false
         }
       }
       return true
