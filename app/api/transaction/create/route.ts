@@ -33,6 +33,12 @@ export async function POST(req: Request) {
     const amount = getPrice(tier)
     const orderId = `SQ-${Date.now()}-${user._id.toString().slice(-6)}`
 
+    // Cancel pending transaction sebelumnya untuk tier yang sama
+    await Transaction.updateMany(
+      { user: user._id, tier, status: "pending" },
+      { $set: { status: "failed" } }
+    )
+
     // Simpan transaction dulu
     const transaction = await Transaction.create({
       user: user._id,

@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react"
 import { Upload, Download, Trash2, Maximize, Check, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useLimits, checkDailyLimit, trackUsage } from "@/hooks/use-limits"
+import { useLimits } from "@/hooks/use-limits"
 
 interface ResizedImage {
   id: string
@@ -42,7 +42,7 @@ export function BulkResizer() {
   const [selectedPreset, setSelectedPreset] = useState<string | null>("Instagram Post")
   const [limitError, setLimitError] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { tier, limits, usage, loading } = useLimits()
+  const { tier, limits, loading } = useLimits()
 
   const resizeImage = async (
     file: File,
@@ -137,12 +137,6 @@ export function BulkResizer() {
 
     if (loading) return
 
-    const dailyOk = checkDailyLimit(usage, limits.dailyLimit)
-    if (!dailyOk) {
-      setLimitError(`Kamu sudah mencapai batas harian ${limits.dailyLimit} gambar. Upgrade ke Pro atau Ultra untuk kuota lebih.`)
-      return
-    }
-
     const validFiles = Array.from(files).filter(file =>
       file.type.startsWith("image/") &&
       ["image/jpeg", "image/png", "image/webp"].includes(file.type)
@@ -204,9 +198,7 @@ export function BulkResizer() {
         )
       )
     }
-
-    trackUsage()
-  }, [targetWidth, targetHeight, maintainAspect, tier, limits, usage, loading])
+  }, [targetWidth, targetHeight, maintainAspect, tier, limits, loading])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -287,7 +279,7 @@ export function BulkResizer() {
       {tier === "free" && !loading && (
         <div className="mb-6 p-3 bg-muted/50 border border-border rounded-lg flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
-            Paket Free: {limits.dailyLimit === Infinity ? "Unlimited" : `${limits.dailyLimit} gambar/hari`}, maks {limits.maxFileSizeMB}MB, {limits.batchSize} gambar/batch
+            Paket Free: maks {limits.maxFileSizeMB}MB, {limits.batchSize} gambar/batch
           </p>
           <a href="/pricing" className="text-xs text-primary font-medium hover:underline">Upgrade</a>
         </div>

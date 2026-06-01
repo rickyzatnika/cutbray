@@ -60,20 +60,4 @@ export function useLimits(): LimitsData {
   return data
 }
 
-export function getToday(): string {
-  return new Date().toISOString().split("T")[0]
-}
 
-export function checkDailyLimit(usage: UsageData, dailyLimit: number): boolean {
-  const today = getToday()
-  if (usage.date !== today) return true
-  return usage.count < dailyLimit
-}
-
-export async function trackUsage(): Promise<void> {
-  try {
-    await fetch("/api/user/usage", { method: "POST" })
-  } catch {
-    // silently fail
-  }
-}

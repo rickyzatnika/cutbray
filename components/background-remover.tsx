@@ -5,7 +5,7 @@ import { removeBackground } from "@imgly/background-removal"
 import { Upload, Download, Trash2, Sparkles, Check, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useLimits, checkDailyLimit, trackUsage } from "@/hooks/use-limits"
+import { useLimits } from "@/hooks/use-limits"
 
 interface ProcessedImage {
   id: string
@@ -23,19 +23,55 @@ export function BackgroundRemover() {
   const [isDragging, setIsDragging] = useState(false)
   const [limitError, setLimitError] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { tier, limits, usage, loading } = useLimits()
+  const { tier, limits, loading } = useLimits()
 
   const processImage = async (image: ProcessedImage): Promise<ProcessedImage> => {
-    try {
-      const blob = await removeBackground(image.originalFile, {
-        progress: (key, current, total) => {
-          const progress = Math.round((current / total) * 100)
-          setImages(prev =>
-            prev.map(img =>
-              img.id === image.id ? { ...img, progress } : img
-            )
+    const maxProgressRef = { current: 0 }
+    const updateProgress = (current: number, total: number) => {
+      const pct = Math.min(Math.round((current / total) * 100), 99)
+      if (pct > maxProgressRef.current) {
+        maxProgressRef.current = pct
+        setImages(prev =>
+          prev.map(img =>
+            img.id === image.id ? { ...img, progress: pct } : img
           )
-        },
+        )
+      }
+    }
+
+    try {
+      let file = image.originalFile
+
+      // Downscale biar gak buang waktu decode image gede
+      const img = new Image()
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve()
+        img.onerror = reject
+        img.src = URL.createObjectURL(file)
+      })
+
+      const MAX = 1024
+      let { width, height } = img
+      if (width > MAX || height > MAX) {
+        const ratio = Math.min(MAX / width, MAX / height)
+        width = Math.round(width * ratio)
+        height = Math.round(height * ratio)
+
+        const canvas = document.createElement("canvas")
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext("2d")!
+        ctx.drawImage(img, 0, 0, width, height)
+
+        const resizedBlob = await new Promise<Blob>((resolve, reject) =>
+          canvas.toBlob(b => b ? resolve(b) : reject(new Error("toBlob failed")), "image/jpeg", 0.9)
+        )
+        file = new File([resizedBlob], file.name, { type: "image/jpeg" })
+      }
+      URL.revokeObjectURL(img.src)
+
+      const blob = await removeBackground(file, {
+        progress: (key, current, total) => updateProgress(current, total),
       })
 
       const resultPreview = URL.createObjectURL(blob)
@@ -60,12 +96,6 @@ export function BackgroundRemover() {
     setLimitError("")
 
     if (loading) return
-
-    const dailyOk = checkDailyLimit(usage, limits.dailyLimit)
-    if (!dailyOk) {
-      setLimitError(`Kamu sudah mencapai batas harian ${limits.dailyLimit} gambar. Upgrade ke Pro atau Ultra untuk kuota lebih.`)
-      return
-    }
 
     const validFiles = Array.from(files).filter(file =>
       file.type.startsWith("image/") &&
@@ -122,9 +152,7 @@ export function BackgroundRemover() {
         )
       )
     }
-
-    trackUsage()
-  }, [tier, limits, usage, loading])
+  }, [tier, limits, loading])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -198,7 +226,7 @@ export function BackgroundRemover() {
       {tier === "free" && !loading && (
         <div className="mb-6 p-3 bg-muted/50 border border-border rounded-lg flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
-            Paket Free: {limits.dailyLimit === Infinity ? "Unlimited" : `${limits.dailyLimit} gambar/hari`}, maks {limits.maxFileSizeMB}MB, {limits.batchSize} gambar/batch
+            Paket Free: maks {limits.maxFileSizeMB}MB, {limits.batchSize} gambar/batch
           </p>
           <a href="/pricing" className="text-xs text-primary font-medium hover:underline">Upgrade</a>
         </div>
@@ -310,11 +338,16 @@ export function BackgroundRemover() {
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
                         {image.status === "processing" && (
-                          <div className="text-center">
-                            <Sparkles className="w-6 h-6 animate-pulse text-primary mx-auto" />
-                            <span className="text-xs text-muted-foreground mt-2 block">
-                              {image.progress}%
-                            </span>
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/50">
+                            <div className="relative">
+                              <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+                            </div>
+                            <div className="text-center">
+                              <p className="text-xs font-medium text-foreground">Removing background...</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">
+                                Processing in browser
+                              </p>
+                            </div>
                           </div>
                         )}
                       </div>

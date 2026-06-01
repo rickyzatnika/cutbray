@@ -142,7 +142,7 @@ export function UpgradeCard({ currentTier, isDemo }: UpgradeCardProps) {
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-green-500" />
-                  {limits.dailyLimit === Infinity ? "Unlimited" : `${limits.dailyLimit} gambar/hari`}
+                  Unlimited pemakaian
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-green-500" />

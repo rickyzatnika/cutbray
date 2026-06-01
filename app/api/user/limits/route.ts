@@ -26,6 +26,16 @@ export async function GET() {
       })
     }
 
+    // Admin all access — skip subscription checks
+    if (user.role === "admin") {
+      return NextResponse.json({
+        tier: "ultra",
+        limits: TIER_LIMITS.ultra,
+        usage: user.dailyUsage || { date: "", count: 0 },
+        paymentVerified: true,
+      })
+    }
+
     let tier = (user.subscription?.tier || "free") as Tier
     let paymentVerified = user.subscription?.paymentVerified || false
 

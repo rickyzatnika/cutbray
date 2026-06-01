@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation"
 import { TIER_LIMITS, TIER_COLORS, formatPrice, type Tier } from "@/lib/limits"
 
 const FEATURES = [
-  { key: "batchSize", label: "Batch per proses", type: "value" as const },
   { key: "maxFileSizeMB", label: "Maks ukuran file", type: "fileSize" as const },
-  { key: "dailyLimit", label: "Kuota harian", type: "daily" as const },
+  { key: "batchSize", label: "Batch per proses", type: "value" as const },
   { key: "highRes", label: "High resolution", type: "bool" as const },
 ]
 
@@ -95,10 +94,6 @@ export default function PricingPage() {
                         <span className="text-foreground">
                           {feature.type === "fileSize"
                             ? `${val}MB`
-                            : feature.type === "daily"
-                            ? val === Infinity
-                              ? "Unlimited"
-                              : `${val} gambar/hari`
                             : feature.type === "value"
                             ? `${val} gambar`
                             : val}

@@ -5,7 +5,7 @@ import imageCompression from "browser-image-compression"
 import { Upload, Download, Trash2, Image as ImageIcon, Zap, Check, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useLimits, checkDailyLimit, trackUsage } from "@/hooks/use-limits"
+import { useLimits } from "@/hooks/use-limits"
 import { TIER_LIMITS } from "@/lib/limits"
 
 interface CompressedImage {
@@ -38,7 +38,7 @@ export function ImageCompressor() {
   const [quality, setQuality] = useState(0.8)
   const [limitError, setLimitError] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { tier, limits, usage, loading } = useLimits()
+  const { tier, limits, loading } = useLimits()
 
   const compressImage = async (image: CompressedImage): Promise<CompressedImage> => {
     try {
@@ -75,12 +75,6 @@ export function ImageCompressor() {
     setLimitError("")
 
     if (loading) return
-
-    const dailyOk = checkDailyLimit(usage, limits.dailyLimit)
-    if (!dailyOk) {
-      setLimitError(`Kamu sudah mencapai batas harian ${limits.dailyLimit} gambar. Upgrade ke Pro atau Ultra untuk kuota lebih.`)
-      return
-    }
 
     const validFiles = Array.from(files).filter(file =>
       file.type.startsWith("image/") &&
@@ -137,9 +131,7 @@ export function ImageCompressor() {
         )
       )
     }
-
-    trackUsage()
-  }, [quality, tier, limits, usage, loading])
+  }, [quality, tier, limits, loading])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -212,7 +204,7 @@ export function ImageCompressor() {
       {tier === "free" && !loading && (
         <div className="mb-6 p-3 bg-muted/50 border border-border rounded-lg flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
-            Paket Free: {limits.dailyLimit === Infinity ? "Unlimited" : `${limits.dailyLimit} gambar/hari`}, maks {limits.maxFileSizeMB}MB, {limits.batchSize} gambar/batch
+            Paket Free: maks {limits.maxFileSizeMB}MB, {limits.batchSize} gambar/batch
           </p>
           <a href="/pricing" className="text-xs text-primary font-medium hover:underline">Upgrade</a>
         </div>

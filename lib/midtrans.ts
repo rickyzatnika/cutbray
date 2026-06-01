@@ -1,8 +1,8 @@
 import { TIER_LIMITS, type Tier } from "@/lib/limits"
 
 const PRICES: Record<string, number> = {
-  pro: 29000,
-  ultra: 59000,
+  pro: 15000,
+  ultra: 30000,
 }
 
 export function isMidtransConfigured(): boolean {
@@ -53,7 +53,7 @@ export async function createMidtransTransaction(params: {
         id: params.tier,
         price: params.grossAmount,
         quantity: 1,
-        name: `Squish ${params.tier.charAt(0).toUpperCase() + params.tier.slice(1)} - ${params.grossAmount === 29000 ? "Bulanan" : "Bulanan"}`,
+        name: `Squish ${params.tier.charAt(0).toUpperCase() + params.tier.slice(1)} - Bulanan`,
       },
     ],
   })
