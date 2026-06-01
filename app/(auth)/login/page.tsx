@@ -96,10 +96,7 @@ export default function LoginPage() {
         <Button
           variant="secondary"
           className="w-full"
-          onClick={async () => {
-            await signIn("google", { redirect: false })
-            redirectAfterLogin()
-          }}
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
         >
           <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
             <path
