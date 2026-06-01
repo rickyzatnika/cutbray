@@ -53,7 +53,7 @@ export async function createMidtransTransaction(params: {
         id: params.tier,
         price: params.grossAmount,
         quantity: 1,
-        name: `Squish ${params.tier.charAt(0).toUpperCase() + params.tier.slice(1)} - Bulanan`,
+        name: `Cutbray ${params.tier.charAt(0).toUpperCase() + params.tier.slice(1)} - Bulanan`,
       },
     ],
   })

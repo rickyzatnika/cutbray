@@ -9,9 +9,26 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Squish - Compress, Remove BG & Resize Images',
-  description: 'Free online image tools. Compress images, remove backgrounds with AI, and bulk resize. 100% private - works in your browser.',
+  title: {
+    default: 'Cutbray - Compress, Remove BG, Resize & Crop Images Online',
+    template: '%s | Cutbray',
+  },
+  description: 'Free online image tools: compress JPG PNG WebP, remove background dengan AI, hapus background foto, resize image, crop image, buat pas foto, sticker maker. 100% private, works in browser.',
+  keywords: [
+    'compress image', 'kompres gambar', 'online image compressor',
+    'remove bg', 'hapus background', 'remove background online', 'background removal ai',
+    'resize image', 'resize gambar online', 'bulk resize image',
+    'crop image', 'crop gambar', 'crop photo online',
+    'pas foto online', 'pas foto background merah biru putih',
+    'wa sticker maker', 'whatsapp sticker maker',
+    'image tools', 'free image editor',
+  ],
   generator: 'v0.app',
+  openGraph: {
+    title: 'Cutbray - Free Online Image Tools',
+    description: 'Compress, remove background, resize & crop images online. 100% free, 100% private, works in your browser.',
+    type: 'website',
+  },
   icons: {
     icon: [
       {
@@ -37,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background" suppressHydrationWarning>
+    <html lang="id" className="bg-background" suppressHydrationWarning>
       <body className="font-sans antialiased relative">
         <GridBackground />
         <Providers>

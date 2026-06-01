@@ -59,7 +59,7 @@ export default function RegisterPage() {
             <Zap className="w-6 h-6 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Daftar</h1>
-          <p className="text-sm text-muted-foreground mt-1">Buat akun Squish baru</p>
+          <p className="text-sm text-muted-foreground mt-1">Buat akun Cutbray baru</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

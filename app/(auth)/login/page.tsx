@@ -52,7 +52,7 @@ export default function LoginPage() {
             <Zap className="w-6 h-6 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Masuk</h1>
-          <p className="text-sm text-muted-foreground mt-1">Masuk ke akun Squish kamu</p>
+          <p className="text-sm text-muted-foreground mt-1">Masuk ke akun Cutbray kamu</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
