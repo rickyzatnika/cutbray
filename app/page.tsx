@@ -130,7 +130,11 @@ export default function Home() {
               Semua tool image gratis yang jalan di browser kamu. Tanpa upload server, tanpa ribet.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
-              {tools.slice(0, 3).map(t => {
+              {[
+                { id: "upscaler" as Tool, label: "AI Upscaler", icon: ZoomIn },
+                { id: "remove-bg" as Tool, label: "Remove BG", icon: Sparkles },
+                { id: "watermark" as Tool, label: "Watermark", icon: Type },
+              ].map(t => {
                 const Icon = t.icon
                 return (
                   <button key={t.id} onClick={() => switchTool(t.id)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors text-sm text-foreground">

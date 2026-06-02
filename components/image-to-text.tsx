@@ -22,6 +22,7 @@ export function ImageToText() {
   const [lang, setLang] = useState(LANGUAGES[0])
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const progressRef = useRef(0)
 
@@ -63,10 +64,20 @@ export function ImageToText() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const handleDrop = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]) }
+  const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true) }
+  const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false) }
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       {!file && (
-        <div onClick={() => inputRef.current?.click()} className="border-2 border-dashed rounded-lg p-12 text-center cursor-pointer hover:border-muted-foreground transition-colors">
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onClick={() => inputRef.current?.click()}
+          className={cn("border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors", isDragging ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground")}
+        >
           <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} />
           <Scan className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
           <p className="text-lg font-medium">Image to Text (OCR)</p>

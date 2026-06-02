@@ -17,6 +17,7 @@ export function ImageToPdf() {
   const [orientation, setOrientation] = useState<"portrait" | "landscape">("portrait")
   const [margin, setMargin] = useState(10)
   const [loading, setLoading] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const addFiles = (files: FileList | File[]) => {
@@ -98,10 +99,20 @@ export function ImageToPdf() {
     setLoading(false)
   }
 
+  const handleDrop = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); addFiles(e.dataTransfer.files) }
+  const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true) }
+  const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false) }
+
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
       {images.length === 0 && (
-        <div onClick={() => inputRef.current?.click()} className="border-2 border-dashed rounded-lg p-12 text-center cursor-pointer hover:border-muted-foreground transition-colors">
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onClick={() => inputRef.current?.click()}
+          className={cn("border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors", isDragging ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground")}
+        >
           <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={e => e.target.files && addFiles(e.target.files)} />
           <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
           <p className="text-lg font-medium">Image ke PDF</p>

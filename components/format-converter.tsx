@@ -18,6 +18,7 @@ export function FormatConverter() {
   const [result, setResult] = useState("")
   const [outputFormat, setOutputFormat] = useState(FORMATS[0])
   const [quality, setQuality] = useState(0.9)
+  const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const imgRef = useRef<HTMLImageElement | null>(null)
 
@@ -60,10 +61,20 @@ export function FormatConverter() {
     a.click()
   }
 
+  const handleDrop = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]) }
+  const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true) }
+  const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false) }
+
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
       {!file && (
-        <div onClick={() => inputRef.current?.click()} className="border-2 border-dashed rounded-lg p-12 text-center cursor-pointer hover:border-muted-foreground transition-colors">
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onClick={() => inputRef.current?.click()}
+          className={cn("border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors", isDragging ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground")}
+        >
           <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} />
           <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
           <p className="text-lg font-medium">Convert Image Format</p>
