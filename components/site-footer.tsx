@@ -8,6 +8,9 @@ const tools = [
   { label: "Pas Foto Online", href: "/#pas-foto" },
   { label: "WA Sticker Maker", href: "/#sticker" },
   { label: "Crop Marketplace", href: "/#smart-crop" },
+  { label: "Format Converter", href: "/#convert" },
+  { label: "Watermark", href: "/#watermark" },
+  { label: "Image to PDF", href: "/#pdf" },
 ]
 
 export function SiteFooter() {

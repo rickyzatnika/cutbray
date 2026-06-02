@@ -9,12 +9,15 @@ import { BulkResizer } from "@/components/bulk-resizer"
 import { PasFoto } from "@/components/pas-foto"
 import { StickerMaker } from "@/components/sticker-maker"
 import { SmartCrop } from "@/components/smart-crop"
+import { FormatConverter } from "@/components/format-converter"
+import { WatermarkTool } from "@/components/watermark-tool"
+import { ImageToPdf } from "@/components/image-to-pdf"
 import { SiteFooter } from "@/components/site-footer"
-import { Zap, Shield, Sparkles, Maximize, FileDown, LogIn, LayoutDashboard, UserCog, Camera, Smile, Crop, Server, Lock, Cpu } from "lucide-react"
+import { Zap, Shield, Sparkles, Maximize, FileDown, LogIn, LayoutDashboard, UserCog, Camera, Smile, Crop, Repeat, Type, FileText, Server, Lock, Cpu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
-type Tool = "compress" | "remove-bg" | "resize" | "pas-foto" | "sticker" | "smart-crop"
+type Tool = "compress" | "remove-bg" | "resize" | "pas-foto" | "sticker" | "smart-crop" | "convert" | "watermark" | "pdf"
 
 const tools = [
   { id: "compress" as Tool, label: "Compress", icon: FileDown, description: "Reduce file size" },
@@ -23,6 +26,9 @@ const tools = [
   { id: "pas-foto" as Tool, label: "Pas Foto", icon: Camera, description: "Bikin pas foto online" },
   { id: "sticker" as Tool, label: "Sticker", icon: Smile, description: "Buat sticker WA" },
   { id: "smart-crop" as Tool, label: "Crop", icon: Crop, description: "Crop buat marketplace" },
+  { id: "convert" as Tool, label: "Convert", icon: Repeat, description: "Convert format gambar" },
+  { id: "watermark" as Tool, label: "Watermark", icon: Type, description: "Tambah teks watermark" },
+  { id: "pdf" as Tool, label: "Image to PDF", icon: FileText, description: "Gabung gambar ke PDF" },
 ]
 
 const toolIdMap: Record<string, Tool> = {
@@ -32,6 +38,9 @@ const toolIdMap: Record<string, Tool> = {
   "pas-foto": "pas-foto",
   sticker: "sticker",
   "smart-crop": "smart-crop",
+  convert: "convert",
+  watermark: "watermark",
+  pdf: "pdf",
 }
 
 export default function Home() {
@@ -162,6 +171,9 @@ export default function Home() {
             {activeTool === "pas-foto" && <PasFoto />}
             {activeTool === "sticker" && <StickerMaker />}
             {activeTool === "smart-crop" && <SmartCrop />}
+            {activeTool === "convert" && <FormatConverter />}
+            {activeTool === "watermark" && <WatermarkTool />}
+            {activeTool === "pdf" && <ImageToPdf />}
           </div>
         </section>
 
