@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useLimits } from "@/hooks/use-limits"
 import { TIER_LIMITS } from "@/lib/limits"
+import { ToolGuide } from "@/components/tool-guide"
 
 interface CompressedImage {
   id: string
@@ -200,6 +201,12 @@ export function ImageCompressor() {
 
   return (
     <div className="w-full max-w-5xl mx-auto">
+      <ToolGuide
+        toolId="compress"
+        title="Cara Compress Gambar"
+        steps={["Upload gambar (JPG, PNG, WebP, GIF)", "Atur kualitas pakai slider", "Download hasilnya — PNG otomatis jadi WebP"]}
+      />
+
       {/* Limit Banner */}
       {tier === "free" && !loading && (
         <div className="mb-6 p-3 bg-muted/50 border border-border rounded-lg flex items-center justify-between">

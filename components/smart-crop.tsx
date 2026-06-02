@@ -90,17 +90,25 @@ export function SmartCrop() {
     i.src = u
   }
 
-  const onMouseDown = (e: React.MouseEvent) => {
+  const getXY = (e: React.MouseEvent | React.TouchEvent) => {
+    if ("touches" in e) return { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    return { x: e.clientX, y: e.clientY }
+  }
+
+  const startDrag = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault()
+    const { x, y } = getXY(e)
     setDragging(true)
-    setDragStart({ x: e.clientX, y: e.clientY, px: pos.x, py: pos.y })
+    setDragStart({ x, y, px: pos.x, py: pos.y })
   }
 
-  const onMouseMove = (e: React.MouseEvent) => {
+  const moveDrag = (e: React.MouseEvent | React.TouchEvent) => {
     if (!dragging) return
-    clampAndRender(dragStart.px + e.clientX - dragStart.x, dragStart.py + e.clientY - dragStart.y)
+    const { x, y } = getXY(e)
+    clampAndRender(dragStart.px + x - dragStart.x, dragStart.py + y - dragStart.y)
   }
 
-  const onMouseUp = () => setDragging(false)
+  const stopDrag = () => setDragging(false)
 
   const download = () => {
     if (!blob) return
@@ -136,8 +144,18 @@ export function SmartCrop() {
           <div className="flex justify-center">
             <div className="w-full max-w-lg">
               <p className="text-xs text-muted-foreground mb-2">Drag foto untuk atur posisi</p>
-              <div ref={containerRef} className="relative bg-secondary rounded-lg overflow-hidden select-none" style={{ aspectRatio: `${platform.w}/${platform.h}`, maxHeight: 500 }} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseUp}>
-                <div className="w-full h-full" onMouseDown={onMouseDown}>
+              <div
+                ref={containerRef}
+                className="relative bg-secondary rounded-lg overflow-hidden select-none touch-none"
+                style={{ aspectRatio: `${platform.w}/${platform.h}`, maxHeight: 500 }}
+                onMouseMove={moveDrag}
+                onMouseUp={stopDrag}
+                onMouseLeave={stopDrag}
+                onTouchMove={moveDrag}
+                onTouchEnd={stopDrag}
+                onTouchCancel={stopDrag}
+              >
+                <div className="w-full h-full" onMouseDown={startDrag} onTouchStart={startDrag}>
                   <img src={url} alt="" className={cn("w-full h-full object-cover pointer-events-none", dragging ? "cursor-grabbing" : "cursor-grab")} style={{ objectPosition: `calc(50% + ${pos.x}px) calc(50% + ${pos.y}px)` }} draggable={false} />
                 </div>
               </div>

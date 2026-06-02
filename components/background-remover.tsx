@@ -6,6 +6,8 @@ import { Upload, Download, Trash2, Sparkles, Check, AlertTriangle } from "lucide
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useLimits } from "@/hooks/use-limits"
+import { ToolGuide } from "@/components/tool-guide"
+import { BeforeAfterSlider } from "@/components/before-after-slider"
 
 interface ProcessedImage {
   id: string
@@ -222,6 +224,12 @@ export function BackgroundRemover() {
 
   return (
     <div className="w-full max-w-5xl mx-auto">
+      <ToolGuide
+        toolId="remove-bg"
+        title="Cara Hapus Background"
+        steps={["Upload foto (JPG, PNG, WebP)", "Tunggu AI process — jalan di browser kamu", "Download hasil PNG dengan background transparan"]}
+      />
+
       {/* Limit Banner */}
       {tier === "free" && !loading && (
         <div className="mb-6 p-3 bg-muted/50 border border-border rounded-lg flex items-center justify-between">
@@ -315,53 +323,28 @@ export function BackgroundRemover() {
           {/* Image Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {images.map(image => (
-              <div key={image.id} className="bg-card rounded-lg border border-border overflow-hidden">
-                {/* Before/After Preview */}
-                <div className="grid grid-cols-2 gap-0.5 bg-border">
+              <div key={image.id} className="bg-card rounded-lg border border-border overflow-hidden relative">
+                {/* Before/After Slider */}
+                {image.resultPreview ? (
+                  <BeforeAfterSlider before={image.preview} after={image.resultPreview} className="w-full" />
+                ) : (
                   <div className="aspect-square relative bg-secondary">
-                    <img
-                      src={image.preview}
-                      alt="Original"
-                      className="absolute inset-0 w-full h-full object-contain"
-                    />
-                    <span className="absolute top-2 left-2 px-2 py-0.5 bg-background/80 text-xs rounded text-foreground">
-                      Original
-                    </span>
-                  </div>
-                  <div className="aspect-square relative bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgZmlsbD0iI2ZmZiIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIi8+PHJlY3QgZmlsbD0iI2UwZTBlMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIi8+PHJlY3QgZmlsbD0iI2UwZTBlMCIgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiLz48L3N2Zz4=')]">
-                    {image.resultPreview ? (
-                      <img
-                        src={image.resultPreview}
-                        alt="Result"
-                        className="absolute inset-0 w-full h-full object-contain"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        {image.status === "processing" && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/50">
-                            <div className="relative">
-                              <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
-                            </div>
-                            <div className="text-center">
-                              <p className="text-xs font-medium text-foreground">Removing background...</p>
-                              <p className="text-[10px] text-muted-foreground mt-0.5">
-                                Processing in browser
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    <span className="absolute top-2 left-2 px-2 py-0.5 bg-background/80 text-xs rounded text-foreground">
-                      Result
-                    </span>
-                    {image.status === "done" && (
-                      <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                        <Check className="w-4 h-4 text-primary-foreground" />
+                    {image.status === "processing" && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/50">
+                        <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+                        <div className="text-center">
+                          <p className="text-xs font-medium text-foreground">Removing background...</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">Processing in browser</p>
+                        </div>
                       </div>
                     )}
                   </div>
-                </div>
+                )}
+                {image.status === "done" && (
+                  <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center z-10">
+                    <Check className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                )}
 
                 {/* Image Info */}
                 <div className="p-3">
