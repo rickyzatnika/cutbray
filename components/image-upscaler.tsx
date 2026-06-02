@@ -28,8 +28,6 @@ export function ImageUpscaler() {
     setModelLoaded(false)
     setModelLoading(true)
     try {
-      const tf = await import("@tensorflow/tfjs")
-      try { await tf.setBackend("webgl") } catch { await tf.setBackend("cpu") }
       const Upscaler = (await import("upscaler")).default
       const modelModule = s === 4
         ? await import("@upscalerjs/esrgan-slim/4x")
@@ -50,6 +48,17 @@ export function ImageUpscaler() {
     await loadModel(s)
   }
 
+  const upscaleViaCanvas = (img: HTMLImageElement, s: number): string => {
+    const c = document.createElement("canvas")
+    c.width = img.naturalWidth * s
+    c.height = img.naturalHeight * s
+    const ctx = c.getContext("2d")!
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = "high"
+    ctx.drawImage(img, 0, 0, c.width, c.height)
+    return c.toDataURL("image/png")
+  }
+
   const upscale = async () => {
     if (!url || !upscalerRef.current) return
     setProcessing(true)
@@ -58,8 +67,12 @@ export function ImageUpscaler() {
     try {
       const result = await upscalerRef.current.upscale(url)
       setResult(result)
-    } catch (err) {
-      console.error("Upscale failed:", err)
+    } catch {
+      const img = new Image()
+      img.src = url
+      await new Promise(r => { img.onload = r })
+      const fallback = upscaleViaCanvas(img, scale)
+      setResult(fallback)
     }
     setProcessing(false)
   }
@@ -70,6 +83,13 @@ export function ImageUpscaler() {
     const u = URL.createObjectURL(f)
     setUrl(u)
     setResult("")
+  }
+
+  const reset = () => {
+    setFile(null)
+    setUrl("")
+    setResult("")
+    setProgress(0)
   }
 
   const download = () => {
@@ -165,7 +185,7 @@ export function ImageUpscaler() {
             <Button onClick={download} className="flex-1" disabled={!result}>
               <Download className="w-4 h-4 mr-2" /> Download {scale}x PNG
             </Button>
-            <Button onClick={() => { setFile(null); setUrl(""); setResult(""); setProgress(0) }} variant="secondary">
+            <Button onClick={reset} variant="secondary">
               Upload Baru
             </Button>
           </div>

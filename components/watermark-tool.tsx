@@ -145,7 +145,7 @@ export function WatermarkTool() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <div className="hidden md:block">
               <p className="text-xs text-muted-foreground mb-2">Original</p>
               <div className="bg-secondary rounded-lg overflow-hidden">
                 <img src={url} alt="" className="w-full object-contain max-h-[400px]" />
