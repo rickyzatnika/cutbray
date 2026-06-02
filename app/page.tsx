@@ -12,12 +12,14 @@ import { SmartCrop } from "@/components/smart-crop"
 import { FormatConverter } from "@/components/format-converter"
 import { WatermarkTool } from "@/components/watermark-tool"
 import { ImageToPdf } from "@/components/image-to-pdf"
+import { ImageUpscaler } from "@/components/image-upscaler"
+import { ImageToText } from "@/components/image-to-text"
 import { SiteFooter } from "@/components/site-footer"
-import { Zap, Shield, Sparkles, Maximize, FileDown, LogIn, LayoutDashboard, UserCog, Camera, Smile, Crop, Repeat, Type, FileText, Server, Lock, Cpu } from "lucide-react"
+import { Zap, Shield, Sparkles, Maximize, FileDown, LogIn, LayoutDashboard, UserCog, Camera, Smile, Crop, Repeat, Type, FileText, ZoomIn, Scan, Server, Lock, Cpu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
-type Tool = "compress" | "remove-bg" | "resize" | "pas-foto" | "sticker" | "smart-crop" | "convert" | "watermark" | "pdf"
+type Tool = "compress" | "remove-bg" | "resize" | "pas-foto" | "sticker" | "smart-crop" | "convert" | "watermark" | "pdf" | "upscaler" | "ocr"
 
 const tools = [
   { id: "compress" as Tool, label: "Compress", icon: FileDown, description: "Reduce file size" },
@@ -29,6 +31,8 @@ const tools = [
   { id: "convert" as Tool, label: "Convert", icon: Repeat, description: "Convert format gambar" },
   { id: "watermark" as Tool, label: "Watermark", icon: Type, description: "Tambah teks watermark" },
   { id: "pdf" as Tool, label: "Image to PDF", icon: FileText, description: "Gabung gambar ke PDF" },
+  { id: "upscaler" as Tool, label: "Upscaler", icon: ZoomIn, description: "Perbesar resolusi gambar" },
+  { id: "ocr" as Tool, label: "OCR", icon: Scan, description: "Ekstrak teks dari gambar" },
 ]
 
 const toolIdMap: Record<string, Tool> = {
@@ -41,6 +45,8 @@ const toolIdMap: Record<string, Tool> = {
   convert: "convert",
   watermark: "watermark",
   pdf: "pdf",
+  upscaler: "upscaler",
+  ocr: "ocr",
 }
 
 export default function Home() {
@@ -139,28 +145,26 @@ export default function Home() {
 
         {/* Tool Section */}
         <section id="tools" className="pb-12 px-4">
-          {/* Tool Tabs */}
-          <div className="max-w-2xl mx-auto mb-8 overflow-x-auto">
-            <div className="flex bg-card border border-border rounded-lg p-1 min-w-max">
-              {tools.map(tool => {
-                const Icon = tool.icon
-                return (
-                  <button
-                    key={tool.id}
-                    onClick={() => switchTool(tool.id)}
-                    className={cn(
-                      "flex items-center gap-1.5 py-2.5 px-3 rounded-md transition-all whitespace-nowrap",
-                      activeTool === tool.id
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    )}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{tool.label}</span>
-                  </button>
-                )
-              })}
-            </div>
+          {/* Tool Pills */}
+          <div className="max-w-3xl mx-auto mb-8 flex flex-wrap justify-center gap-2">
+            {tools.map(tool => {
+              const Icon = tool.icon
+              return (
+                <button
+                  key={tool.id}
+                  onClick={() => switchTool(tool.id)}
+                  className={cn(
+                    "inline-flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-medium transition-all",
+                    activeTool === tool.id
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-card text-muted-foreground border-border hover:border-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tool.label}
+                </button>
+              )
+            })}
           </div>
 
           {/* Active Tool */}
@@ -174,6 +178,8 @@ export default function Home() {
             {activeTool === "convert" && <FormatConverter />}
             {activeTool === "watermark" && <WatermarkTool />}
             {activeTool === "pdf" && <ImageToPdf />}
+            {activeTool === "upscaler" && <ImageUpscaler />}
+            {activeTool === "ocr" && <ImageToText />}
           </div>
         </section>
 

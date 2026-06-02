@@ -11,6 +11,8 @@ const tools = [
   { label: "Format Converter", href: "/#convert" },
   { label: "Watermark", href: "/#watermark" },
   { label: "Image to PDF", href: "/#pdf" },
+  { label: "AI Upscaler", href: "/#upscaler" },
+  { label: "Image to Text", href: "/#ocr" },
 ]
 
 export function SiteFooter() {
